@@ -48,13 +48,9 @@
 
 #define _(x) x
 
-#if defined __GXX_EXPERIMENTAL_CXX0X__ || __cplusplus >= 201103L
-# define anope_override override
-# define anope_final final
-#else
-# define anope_override
-# define anope_final
-#endif
+// These are deprecated but still used for now.
+#define anope_override override
+#define anope_final final
 
 #ifndef _WIN32
 # define DllExport

@@ -26,14 +26,15 @@ set(ENV{LC_ALL} C)
 set(DEFAULT_LIBRARY_DIRS)
 set(DEFAULT_INCLUDE_DIRS)
 
-# Check that we aren't running on an ancient broken GCC
-if(CMAKE_COMPILER_IS_GNUCXX)
-  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 4.2)
-    message(FATAL_ERROR "Your compiler is too old to build Anope. Upgrade to GCC 4.2 or newer!")
-  elseif(CMAKE_CXX_COMPILER_ID VERSION_GREATER_EQUAL 6.0)
-    set(CXXFLAGS "${CXXFLAGS} -fno-delete-null-pointer-checks")
-  endif()
+# Disable null pointer checks for now.
+if(CMAKE_COMPILER_IS_GNUCXX AND CMAKE_CXX_COMPILER_ID VERSION_GREATER_EQUAL 6.0)
+  set(CXXFLAGS "${CXXFLAGS} -fno-delete-null-pointer-checks")
 endif()
+
+# The minimum C++ version is C++17.
+set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # If we are using a GNU compiler (have to use CXX because it seems to fail on C), we will be able to determine it's default paths for libraries and includes
 if(CMAKE_COMPILER_IS_GNUCXX OR "${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang$")
