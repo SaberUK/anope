@@ -25,6 +25,12 @@ Mail::Message::~Message()
 		Log(LOG_NORMAL, "mail") << "Error delivering mail for " << mail_to << " (" << addr << ")";
 }
 
+Anope::string Mail::Message::Escape(const Anope::string &str)
+{
+	// https://datatracker.ietf.org/doc/html/rfc5322#section-3.2.1
+	return str.replace_all_cs("\\", "\\\\");
+}
+
 void Mail::Message::Run()
 {
 	FILE *pipe = popen(sendmail_path.c_str(), "w");
@@ -35,14 +41,14 @@ void Mail::Message::Run()
 		return;
 	}
 
-	fprintf(pipe, "From: %s\n", send_from.c_str());
+	fprintf(pipe, "From: %s\n", Escape(send_from).c_str());
 	if (this->dont_quote_addresses)
-		fprintf(pipe, "To: %s <%s>\n", mail_to.c_str(), addr.c_str());
+		fprintf(pipe, "To: %s <%s>\n", Escape(mail_to).c_str(), Escape(addr).c_str());
 	else
-		fprintf(pipe, "To: \"%s\" <%s>\n", mail_to.c_str(), addr.c_str());
-	fprintf(pipe, "Subject: %s\n", subject.c_str());
+		fprintf(pipe, "To: \"%s\" <%s>\n", Escape(mail_to).c_str(), Escape(addr).c_str());
+	fprintf(pipe, "Subject: %s\n", Escape(subject).c_str());
 	fprintf(pipe, "\n");
-	fprintf(pipe, "%s", message.c_str());
+	fprintf(pipe, "%s", Escape(message).c_str());
 	fprintf(pipe, "\n.\n");
 
 	pclose(pipe);
